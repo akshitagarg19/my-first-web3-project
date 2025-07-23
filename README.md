@@ -1,13 +1,13 @@
-Simple Web3 Wallet Connector
+**Simple Web3 Wallet Connector**
 This image would be generated using a tool like ImgCreator with the prompt: "futuristic happy digital painting with a bull mascot hero in a happy, bright futuristic city, creating abundance, new frontiers"
 
-Project Description
+**Project Description**
 This project introduces a fundamental decentralized application (dApp) designed for the Ethereum Blockchain. It enables users to seamlessly connect their Web3 wallets, such as MetaMask, to a simple smart contract. The core functionality allows for reading a public greeting message stored on the blockchain and, more importantly, updating this message through a secure transaction. This dApp serves as an accessible entry point, illustrating the basic principles of blockchain interaction and smart contract communication in a straightforward manner.
 
-Vision
+**Vision**
 Our vision for this project is to significantly lower the barrier to entry for Web3 development, making the complexities of blockchain interaction both accessible and intuitive for beginners. By demystifying the process of connecting wallets and interacting with smart contracts, we aim to spark curiosity and empower a new generation of builders. This project is a catalyst, encouraging more individuals to confidently explore, innovate, and contribute to the decentralized ecosystem, ultimately fostering broader adoption and understanding of blockchain technology.
 
-Software Development Plan
+**Software Development Plan**
 Smart Contract Development:
 
 Define Greeter contract with a string state variable greeting.
@@ -24,7 +24,7 @@ Deploy the Greeter contract to an Ethereum testnet (e.g., Sepolia) using tools l
 
 Note down the deployed contract address and ABI.
 
-Front-End Setup:
+**Front-End Setup:**
 
 Create a React application (or a simple HTML/JS page).
 
@@ -48,7 +48,7 @@ Develop a function to call setGreeting() with user input, sending a transaction 
 
 Handle loading states and basic error messages for transactions.
 
-Deployment:
+**Deployment:**
 
 Deploy the front-end application to a web hosting service (e.g., Netlify, Vercel, GitHub Pages).
 
@@ -75,7 +75,7 @@ Create Project Folder:
 
 Create a new folder on your computer (e.g., my-first-web3-project).
 
-Save the Files:
+**Save the Files:**
 
 Save the content provided for index.html into a file named index.html inside your my-first-web3-project folder.
 
