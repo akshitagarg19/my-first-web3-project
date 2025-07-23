@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First Web3 Project</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Inter font */
+        body {
+            font-family: "Inter", sans-serif;
+        }
+        /* Basic styling for the message box */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-800 to-purple-900 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-gray-900 bg-opacity-70 backdrop-blur-md p-8 rounded-xl shadow-2xl w-full max-w-md border border-blue-700 text-white text-center">
+        <h1 class="text-3xl font-extrabold mb-6 text-blue-300">
+            Connect Your MetaMask Wallet
+        </h1>
+
+        <div id="statusMessage" class="text-lg mb-6 text-gray-300">
+            Click the button below to connect your wallet.
+        </div>
+
+        <button
+            id="connectWalletBtn"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg"
+        >
+            Connect Wallet
+        </button>
+
+        <div id="accountInfo" class="mt-8 pt-6 border-t border-blue-700 hidden">
+            <h2 class="text-2xl font-bold mb-4 text-blue-300">Connected Account</h2>
+            <p class="text-lg break-all font-mono" id="currentAccountAddress"></p>
+        </div>
+    </div>
+
+    <!-- Custom message box for alerts -->
+    <div id="customMessageBox" class="message-box"></div>
+
+    <script>
+        // Get references to HTML elements
+        const connectWalletBtn = document.getElementById('connectWalletBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const accountInfo = document.getElementById('accountInfo');
+        const currentAccountAddress = document.getElementById('currentAccountAddress');
+        const customMessageBox = document.getElementById('customMessageBox');
+
+        // Function to display a custom message
+        function showMessage(message, type = 'info') {
+            customMessageBox.textContent = message;
+            customMessageBox.className = 'message-box show'; // Reset and show
+            if (type === 'error') {
+                customMessageBox.style.backgroundColor = '#dc2626'; // Red for error
+            } else {
+                customMessageBox.style.backgroundColor = '#333'; // Default dark
+            }
+            setTimeout(() => {
+                customMessageBox.classList.remove('show');
+            }, 3000); // Hide after 3 seconds
+        }
+
+        // Function to handle connecting to MetaMask
+        async function connectWallet() {
+            // Check if MetaMask is installed
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    // Request account access
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const account = accounts[0]; // Get the first connected account
+
+                    statusMessage.textContent = 'Wallet Connected!';
+                    currentAccountAddress.textContent = account;
+                    accountInfo.classList.remove('hidden'); // Show account info
+                    connectWalletBtn.disabled = true; // Disable button after connecting
+                    connectWalletBtn.textContent = 'Wallet Connected';
+                    showMessage('MetaMask connected successfully!', 'success');
+
+                    // Listen for account changes
+                    window.ethereum.on('accountsChanged', (newAccounts) => {
+                        if (newAccounts.length > 0) {
+                            currentAccountAddress.textContent = newAccounts[0];
+                            showMessage('Account changed!', 'info');
+                        } else {
+                            // User disconnected all accounts
+                            statusMessage.textContent = 'Wallet Disconnected. Click to connect.';
+                            currentAccountAddress.textContent = '';
+                            accountInfo.classList.add('hidden');
+                            connectWalletBtn.disabled = false;
+                            connectWalletBtn.textContent = 'Connect Wallet';
+                            showMessage('MetaMask disconnected.', 'info');
+                        }
+                    });
+
+                    // Listen for network changes
+                    window.ethereum.on('chainChanged', (chainId) => {
+                        console.log('Network changed to:', chainId);
+                        showMessage(`Network changed to Chain ID: ${chainId}`, 'info');
+                        // You might want to re-fetch data or prompt user to switch networks here
+                    });
+
+                } catch (error) {
+                    console.error("User rejected connection or an error occurred:", error);
+                    if (error.code === 4001) {
+                        // User rejected the request
+                        showMessage('Connection rejected by user.', 'error');
+                    } else {
+                        showMessage('Error connecting to MetaMask. Please try again.', 'error');
+                    }
+                    statusMessage.textContent = 'Connection failed. Please try again.';
+                }
+            } else {
+                // MetaMask is not installed
+                showMessage('MetaMask is not installed. Please install it to use this dApp.', 'error');
+                statusMessage.textContent = 'MetaMask not found. Please install it.';
+                connectWalletBtn.disabled = true;
+            }
+        }
+
+        // Add event listener to the button
+        connectWalletBtn.addEventListener('click', connectWallet);
+
+        // Initial check on page load to see if MetaMask is already connected
+        window.onload = async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        // If accounts are already connected, update UI
+                        statusMessage.textContent = 'Wallet Already Connected!';
+                        currentAccountAddress.textContent = accounts[0];
+                        accountInfo.classList.remove('hidden');
+                        connectWalletBtn.disabled = true;
+                        connectWalletBtn.textContent = 'Wallet Connected';
+                        showMessage('MetaMask already connected!', 'success');
+
+                        // Set up listeners even if already connected
+                        window.ethereum.on('accountsChanged', (newAccounts) => {
+                            if (newAccounts.length > 0) {
+                                currentAccountAddress.textContent = newAccounts[0];
+                                showMessage('Account changed!', 'info');
+                            } else {
+                                statusMessage.textContent = 'Wallet Disconnected. Click to connect.';
+                                currentAccountAddress.textContent = '';
+                                accountInfo.classList.add('hidden');
+                                connectWalletBtn.disabled = false;
+                                connectWalletBtn.textContent = 'Connect Wallet';
+                                showMessage('MetaMask disconnected.', 'info');
+                            }
+                        });
+                        window.ethereum.on('chainChanged', (chainId) => {
+                            console.log('Network changed to:', chainId);
+                            showMessage(`Network changed to Chain ID: ${chainId}`, 'info');
+                        });
+
+                    } else {
+                        statusMessage.textContent = 'Click the button below to connect your wallet.';
+                    }
+                } catch (error) {
+                    console.error("Error during initial wallet check:", error);
+                    showMessage('Error checking MetaMask connection on load.', 'error');
+                }
+            } else {
+                statusMessage.textContent = 'MetaMask not found. Please install it.';
+                connectWalletBtn.disabled = true;
+                showMessage('MetaMask is not installed. Please install it to use this dApp.', 'error');
+            }
+        };
+    </script>
+</body>
+</html>
