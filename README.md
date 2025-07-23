@@ -1,10 +1,5 @@
 # Simple Web3 Wallet Connector
 
-![Project Logo Placeholder](https://placehold.co/800x400/6A0DAD/FFFFFF?text=Futuristic+Bull+Creating+Abundance)
-*This image would be generated using a tool like ImgCreator with the prompt: "futuristic happy digital painting with a bull mascot hero in a happy, bright futuristic city, creating abundance, new frontiers"*
-
----
-
 ## Project Description
 
 This project introduces a fundamental decentralized application (dApp) designed for the **Ethereum Blockchain**. It enables users to seamlessly connect their Web3 wallets, such as MetaMask, to a simple smart contract. The core functionality allows for reading a public greeting message stored on the blockchain and, more importantly, updating this message through a secure transaction. This dApp serves as an accessible entry point, illustrating the basic principles of blockchain interaction and smart contract communication in a straightforward manner.
